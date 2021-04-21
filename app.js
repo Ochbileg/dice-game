@@ -104,7 +104,7 @@ document.querySelector(".btn-hold").addEventListener("click", function () {
     document.getElementById("score-" + activePlayer).textContent =
       scores[activePlayer];
 
-    if (scores[activePlayer] >= 15) {
+    if (scores[activePlayer] >= 100) {
       isGameRunning = false;
       // тухайн идэвхтэй тоглогчийг хожсон гэж зарлана
       document.getElementById("name-" + activePlayer).textContent = "Winner!";
