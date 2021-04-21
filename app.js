@@ -31,8 +31,8 @@ function initGame() {
   document.getElementById("current-0").textContent = 0;
   document.getElementById("current-1").textContent = 0;
   //  Хожсон гэсэн бичгийг арилгана
-  document.getElementById("name-0").textContent = "Player 1";
-  document.getElementById("name-1").textContent = "Player 2";
+  document.getElementById("name-0").textContent = "1-р тоглогч";
+  document.getElementById("name-1").textContent = "2-р тоглогч";
   // Ялагчийн стайл  арилгана
   document.querySelector(".player-0-panel").classList.remove("winner");
   document.querySelector(".player-1-panel").classList.remove("winner");
