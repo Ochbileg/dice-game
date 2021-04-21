@@ -7,18 +7,46 @@ var scores = [0, 0];
 // тоглогчийн ээлжиндээ цуглуулж буй оноог хадгалах хувьсагч
 var roundScore = 0;
 
-// Шооны аль талаараа буусныг хадгалах хувьсагч хэрэгтэй, 1-6 гэсэн утгыг энэ хувьсагчид санамсаргүйгээр үүсгэж өгнө.
-// Програм эхлэхэд бэлдэнэ
-document.getElementById("score-0").textContent = 0;
-document.getElementById("score-1").textContent = 0;
-
-document.getElementById("current-0").textContent = 0;
-document.getElementById("current-1").textContent = 0;
-
+// Шоог хувьсагч болгож үүсгэх
 var diceDom = document.querySelector(".dice");
-diceDom.style.display = "none";
+
+var isGameRunning;
+
+initGame();
+
+function initGame() {
+  isGameRunning = true;
+  // Идэвхтэй тоглогчиг Player 1 болгоно
+  activePlayer = 0;
+
+  // тоглогчин цуглуулсан оноог хадгалах хувьсагч
+  scores = [0, 0];
+
+  // тоглогчийн ээлжиндээ цуглуулж буй оноог хадгалах хувьсагч
+  roundScore = 0;
+  // Бүх оноог тэглэнэ
+  document.getElementById("score-0").textContent = 0;
+  document.getElementById("score-1").textContent = 0;
+
+  document.getElementById("current-0").textContent = 0;
+  document.getElementById("current-1").textContent = 0;
+  //  Хожсон гэсэн бичгийг арилгана
+  document.getElementById("name-0").textContent = "Player 1";
+  document.getElementById("name-1").textContent = "Player 2";
+  // Ялагчийн стайл  арилгана
+  document.querySelector(".player-0-panel").classList.remove("winner");
+  document.querySelector(".player-1-panel").classList.remove("winner");
+  // тухайн тоглогчийг идэвхтэй гэсэн стайл арилгах
+  document.querySelector(".player-0-panel").classList.remove("active");
+  document.querySelector(".player-0-panel").classList.remove("active");
+
+  document.querySelector(".player-0-panel").classList.add("active");
+  // Шоог арилгана
+  diceDom.style.display = "none";
+}
 
 // Roll Dice button - start
+
 document.body.addEventListener("keyup", (event) => {
   if (event.key === " ") {
     rollDicer();
@@ -35,20 +63,27 @@ document.querySelector(".btn-roll").addEventListener("click", function () {
   rollDicer();
 });
 
+// Шооны аль талаараа буусныг хадгалах хувьсагч хэрэгтэй, 1-6 гэсэн утгыг энэ хувьсагчид санамсаргүйгээр үүсгэж өгнө.
 function rollDicer() {
-  // Санамсаргүй 1-6 тоо гаргаж өгдөг
-  var diceNumber = Math.floor(Math.random() * 6) + 1;
+  if (isGameRunning) {
+    // Санамсаргүй 1-6 тоо гаргаж өгдөг
+    var diceNumber = Math.floor(Math.random() * 6) + 1;
 
-  // Шооны зургийг сольдог
-  diceDom.style.display = "block";
-  diceDom.src = "dice-" + diceNumber + ".png";
+    // Шооны зургийг сольдог
+    diceDom.style.display = "block";
+    diceDom.src = "dice-" + diceNumber + ".png";
 
-  // Тоогоо нэмээд харуулна
-  if (diceNumber === 1) {
-    switchToNextPlayer();
+    // Тоогоо нэмээд харуулна
+    if (diceNumber === 1) {
+      switchToNextPlayer();
+    } else {
+      roundScore = roundScore + diceNumber;
+      document.getElementById(
+        "current-" + activePlayer
+      ).textContent = roundScore;
+    }
   } else {
-    roundScore = roundScore + diceNumber;
-    document.getElementById("current-" + activePlayer).textContent = roundScore;
+    alert("Please restart the game");
   }
 }
 
@@ -63,22 +98,30 @@ function rollDicer() {
 
 // Anonymous function ashiglaj event listener nemeh
 document.querySelector(".btn-hold").addEventListener("click", function () {
-  // актив тоглогчийн оноог глобал оноо дээр нэмнэ
-  scores[activePlayer] = scores[activePlayer] + roundScore;
-  document.getElementById("score-" + activePlayer).textContent =
-    scores[activePlayer];
+  if (isGameRunning) {
+    // актив тоглогчийн оноог глобал оноо дээр нэмнэ
+    scores[activePlayer] = scores[activePlayer] + roundScore;
+    document.getElementById("score-" + activePlayer).textContent =
+      scores[activePlayer];
 
-  if (scores[activePlayer] >= 15) {
-    document.getElementById("name-" + activePlayer).textContent = "Winner!";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
+    if (scores[activePlayer] >= 15) {
+      isGameRunning = false;
+      // тухайн идэвхтэй тоглогчийг хожсон гэж зарлана
+      document.getElementById("name-" + activePlayer).textContent = "Winner!";
+      // тухайн идэвхтэй тоглогчийг ялагч стайл нэмэх
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      // тухайн тоглогчийг идэвхтэй гэсэн стайл арилгах
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+    } else {
+      // ээлжийн солих ба оноог тэглэнэ
+      switchToNextPlayer();
+    }
   } else {
-    // ээлжийн солих ба оноог тэглэнэ
-    switchToNextPlayer();
+    alert("Please restart the game");
   }
 });
 
@@ -96,4 +139,4 @@ function switchToNextPlayer() {
 
 // шинэ тоглоом эхлүүлэх эвэнт
 
-document.querySelector(".btn-new").addEventListener("click", function () {});
+document.querySelector(".btn-new").addEventListener("click", initGame);
